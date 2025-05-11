@@ -5,6 +5,7 @@ import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import { Google, Facebook } from "@mui/icons-material";
 import { jwtDecode } from "jwt-decode";
 import { signin } from "../../apis/services/AuthService";
+import LoginByGoogle from "./LoginByGoogle";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -74,22 +75,7 @@ const LoginPage = () => {
         </Button>
 
         <Box display="flex" justifyContent="space-between" mt={2} gap={2}>
-          <Button
-            variant="contained"
-            color="error"
-            className={styles["google-button"]}
-            startIcon={<Google />}
-          >
-            Google
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            className={styles["facebook-button"]}
-            startIcon={<Facebook />}
-          >
-            Facebook
-          </Button>
+          <LoginByGoogle />
         </Box>
 
         <Box textAlign="center" mt={2}>

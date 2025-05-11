@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MapPin,
   Navigation,
@@ -9,6 +9,7 @@ import {
   Thermometer,
   Sun,
   RefreshCw,
+  Clock,
 } from "lucide-react";
 import {
   getCurrentCoor,
@@ -25,8 +26,36 @@ export default function PredictFlood() {
   const [loading, setLoading] = useState(false);
   const [prediction, setPrediction] = useState(null);
   const [predictLoading, setPredictLoading] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
 
   const FAST_API_URL = import.meta.env.VITE_PREDICT_FLOOD_API;
+
+  // Start timer for prediction wait time
+  useEffect(() => {
+    if (predictLoading) {
+      // Reset timer when prediction starts
+      setElapsedTime(0);
+      // Set up interval to update timer every second
+      const interval = setInterval(() => {
+        setElapsedTime((prevTime) => prevTime + 1);
+      }, 1000);
+      setTimerInterval(interval);
+    } else {
+      // Clear interval when prediction completes
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        setTimerInterval(null);
+      }
+    }
+
+    // Clean up interval on component unmount
+    return () => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+    };
+  }, [predictLoading]);
 
   const estimateBrightSunshine = (data) => {
     const sunrise = data.city.sunrise;
@@ -125,6 +154,15 @@ export default function PredictFlood() {
       alert(`Prediction error: ${error.message}`);
     }
     setPredictLoading(false);
+  };
+
+  // Format time in MM:SS format
+  const formatElapsedTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   // Helper function to get appropriate units for weather data
@@ -330,12 +368,31 @@ export default function PredictFlood() {
             </div>
           ) : (
             <div className="flex-grow flex flex-col items-center justify-center text-center">
-              <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                <Droplet className="h-16 w-16 text-gray-300" />
-              </div>
-              <p className="text-gray-400 mb-8">
-                Run the prediction to see flood risk analysis
-              </p>
+              {predictLoading ? (
+                <>
+                  <div className="w-32 h-32 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                    <RefreshCw className="h-16 w-16 text-blue-500 animate-spin" />
+                  </div>
+                  <div className="flex items-center justify-center mb-2">
+                    <Clock className="h-5 w-5 text-blue-500 mr-2" />
+                    <p className="text-blue-600 font-medium">
+                      Time elapsed: {formatElapsedTime(elapsedTime)}
+                    </p>
+                  </div>
+                  <p className="text-gray-500">
+                    Analyzing data, please wait...
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                    <Droplet className="h-16 w-16 text-gray-300" />
+                  </div>
+                  <p className="text-gray-400 mb-8">
+                    Run the prediction to see flood risk analysis
+                  </p>
+                </>
+              )}
             </div>
           )}
 
@@ -345,7 +402,10 @@ export default function PredictFlood() {
             className="mt-auto w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition duration-200 disabled:bg-blue-300 flex items-center justify-center"
           >
             {predictLoading ? (
-              <RefreshCw className="animate-spin h-5 w-5 mr-2" />
+              <>
+                <RefreshCw className="animate-spin h-5 w-5 mr-2" />
+                Analyzing...
+              </>
             ) : (
               "Analyze Flood Risk"
             )}

@@ -18,3 +18,12 @@ export const signup = async (data) => {
     handleApiError(error);
   }
 };
+
+export const googleAuth = async (token) => {
+  try {
+    const res = await apiClient.post(`/front/auth/google-login`, { token });
+    return res.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
