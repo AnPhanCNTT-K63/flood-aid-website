@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { checkout } from "../../apis/services/PaymentService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   HeartHandshake,
   CreditCard,
@@ -14,6 +14,14 @@ export default function DonatePanel() {
   const [currency, setCurrency] = useState("USD");
   const [loading, setLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/unauthorized");
+    }
+  }, [navigate]);
 
   const exchangeRate = 26000;
 
@@ -58,8 +66,8 @@ export default function DonatePanel() {
         throw new Error("No checkout URL returned");
       }
     } catch (error) {
+      navigate("/unauthorized");
       console.error("Checkout error:", error);
-      alert("There was an error processing your payment. Please try again.");
     } finally {
       setLoading(false);
     }
