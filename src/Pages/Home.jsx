@@ -70,7 +70,6 @@ const Home = () => {
           </Grid>
         </Grid>
       </Box>
-      <DonatePanel />
     </div>
   );
 };

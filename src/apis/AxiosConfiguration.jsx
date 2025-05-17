@@ -13,8 +13,6 @@ apiClient.interceptors.request.use(
       config.headers["Authorization"] = `Bearer ${token}`;
     } else {
       console.log("No token found in localStorage");
-      // Redirect using window.location if not authorized
-      window.location.href = "/unauthorized";
     }
     return config;
   },
