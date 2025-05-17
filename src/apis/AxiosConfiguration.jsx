@@ -1,4 +1,5 @@
 import axios from "axios";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const apiClient = axios.create({
@@ -11,9 +12,10 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     } else {
-      console.log("No token found in localStorage or sessionStorage");
+      console.log("No token found in localStorage");
+      // Redirect using window.location if not authorized
+      window.location.href = "/unauthorized";
     }
-    console.log("Authorization header:", config.headers["Authorization"]);
     return config;
   },
   (error) => Promise.reject(error)
