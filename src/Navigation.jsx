@@ -40,6 +40,7 @@ import UserDonationItems from "./Pages/donate/UserDonationItem";
 import DonationItemDetail from "./Pages/donate/DonationItemDetail";
 import FloodAidReliefCaseDetail from "./Pages/community/FloodAidReliefCaseDetail";
 import DonatePanelReliefCase from "./Pages/donate/DonatePanelReliefCase";
+import Unauthorized from "./Pages/Unauthorized";
 
 function Navigation() {
   const location = useLocation();
@@ -73,6 +74,7 @@ function Navigation() {
       <Route path="/stories" element={<StoriesInPhoto />} />
       <Route path="/test-model" element={<Sentiment />} />
       <Route path="/transaction" element={<UserTransactions />} />
+      <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="/donation-items" element={<UserDonationItems />} />
       <Route
         path="/donate-relief-case/:id"
