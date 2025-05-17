@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { createSupportTicket } from "../../apis/services/TicketService";
+import { useNavigate } from "react-router-dom";
 
 const HelpRequestForm = ({ onClose }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     purpose: "",
     description: "",
@@ -20,6 +22,12 @@ const HelpRequestForm = ({ onClose }) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/unauthorized");
+      return;
+    }
 
     try {
       // Create FormData to handle file uploads
