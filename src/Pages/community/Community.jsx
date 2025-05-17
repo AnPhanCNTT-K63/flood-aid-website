@@ -68,7 +68,12 @@ const FloodAidFeed = () => {
           <button
             className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
             onClick={() => {
-              navigate("/create-post");
+              const token = localStorage.getItem("token");
+              if (!token) {
+                navigate("/unauthorized");
+              } else {
+                navigate("/create-post");
+              }
             }}
           >
             Share Your Story
